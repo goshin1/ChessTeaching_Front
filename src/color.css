@@ -1,0 +1,98 @@
+.color-selection {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    background-image: url(./image/selection_background.png);
+    background-size: 100%;
+    background-repeat: no-repeat;
+}
+
+#colorSelectionBox{
+    z-index: 1;
+    margin: 0px auto;
+    width: 800px;
+    height: 400px;
+    background-color: #ddaf73;
+    border-radius: 25px;
+    border : 10px solid #724f3b;
+    box-shadow: 0px 0px 15px rgba(0,0,0,0.5);
+}
+
+.selectionColorBtn{
+    margin: 50px 50px;
+    width: 300px;
+    height: 300px;
+    border-radius: 25px;
+    background-size: 100%;
+    box-shadow: 0px 0px 15px rgba(0,0,0,0.5);
+    cursor: pointer;
+    float: left;
+    transition: all 0.5s;
+}
+
+#black_selection{
+    background-image: url(./image/black_selection.png);
+}
+
+#black_selection:hover{
+    box-shadow: 0px 0px 25px rgba(0, 0, 0, 0.8);
+}
+
+#white_selection{
+    background-image: url(./image/white_selection.png);
+}
+
+#white_selection:hover{
+    box-shadow: 0px 0px 25px rgba(255, 255, 255, 0.8);
+}
+
+#gameStart{
+    width: 400px;
+    height: 200px;
+}
+
+.color-selection h2{
+    width: 300px;
+    line-height: 40px;
+    height: 40px;
+    margin-top: -200px;
+    background-color: #ddaf73;
+    border-radius: 25px;
+    border : 10px solid #724f3b;
+    color: #38271d;
+    box-shadow: 0px 0px 15px rgba(0,0,0,0.5);
+}
+
+  
+@keyframes slidein {
+    0% {
+        margin-bottom: 25px;
+    }
+
+    50% {
+        margin-bottom: 75px;
+    }
+
+    100% {
+        margin-bottom: 25px;
+    }
+}
+
+#decoColor{
+    width: 100%;
+    position: absolute;
+    bottom: 0;
+}
+
+#decoColor img{
+    margin: 25px;
+    width: 350px;
+    display: block;
+    border : 10px solid #724f3b;
+    border-radius: 25px;
+    box-shadow: 0px 0px 15px rgba(0,0,0,0.5);
+    animation: slidein 2s infinite;
+}
+

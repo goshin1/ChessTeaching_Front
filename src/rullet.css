@@ -1,0 +1,114 @@
+.wheel-container {
+    margin-top : -100px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    height: 100vh;
+  }
+  
+  .wheel {
+    position: relative;
+    width: 300px;
+    height: 300px;
+    border-radius: 50%;
+    border: 10px solid #000;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 20px;
+    overflow: hidden;
+    z-index: 1; /* 룰렛이 버튼 뒤로 가는 문제를 해결 */
+    transform-origin: 50% 50%; /* 회전 중심을 원의 중앙으로 설정 */
+   /* 섹터들이 밖으로 나가는 것을 방지 */
+  }
+  
+  .sector {
+    position: absolute;
+    width: 80%;
+    height: 80%;
+    clip-path: polygon(50% 0%, 100% 100%, 0% 100%);  /* 삼각형 모양으로 잘라냄 */
+    display: flex;
+    text-indent: -140px;
+    justify-content: center;
+    align-items: center;
+    color: rgb(255,255,255);
+    background-image: url(./image/lightWood.png);
+    transform-origin: 100% 100%; /* 회전 중심을 원의 끝 부분으로 설정 */
+  }
+  
+  .sector span {
+    transform: rotate(-90deg);  /* 텍스트가 올바르게 보이도록 회전 */
+    font-weight: bold;
+  }
+  
+
+  #askBtn{
+    margin-top: -215px;
+    width: 65px;
+    height: 65px;
+    border: 5px solid #3f2c21;
+    background-color: #724f3b;
+    cursor: pointer;
+    font-size: 20px;
+    font-weight: bold;
+    transition: all 0.2s;
+    z-index: 2;
+    border-radius: 15px;
+    
+}
+  
+  .result {
+    margin-top: 20px;
+    font-size: 20px;
+    font-weight: bold;
+    color: #333;
+  }
+  
+  
+  
+  #move{
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    margin-left: -60%;
+    margin-top: -60%;
+  }
+
+  #thinking{
+    margin: 50px 100px;
+    width: 400px;
+    height: 500px;
+    border-radius: 15px;
+    border: 5px solid #724f3b;
+    background-color: #e6b781;
+    overflow: hidden;
+    position: absolute;
+    z-index: 4;
+}
+
+#thinking img{
+    margin: 20px auto;
+    width: 65%;
+    border: 5px solid #724f3b;
+    display: block;
+    border-radius: 15px;
+}
+
+#thinkingBtn{
+    left: 150px;
+    position: absolute;
+    width: 100px;
+    height: 40px;
+    border-radius: 15px;
+    border: none;
+    background-color: #3f2c21;
+    color: rgb(255,255,255);
+    cursor: pointer;
+    bottom: 10px;
+    transition: all 0.2s;
+}
+
+#thinkingBtn:hover{
+    background-color: #271b15;
+}

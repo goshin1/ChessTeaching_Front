@@ -1,0 +1,195 @@
+/* Board.css */
+
+.square.valid {
+    background-color: rgba(0, 255, 0, 0.3); /* 유효한 이동 위치를 녹색으로 표시 */
+}
+
+.piece{
+    cursor: pointer;
+}
+
+.piece.white {
+    color: white;
+    /* 추가 스타일링 가능 */
+}
+
+.piece.black {
+    color: black;
+    /* 추가 스타일링 가능 */
+}
+
+.piece.dragging {
+    opacity: 0.5;
+}
+
+.board {
+    display: flex;
+    flex-direction: column;
+    margin: 20px auto;
+    width: 480px; /* 60px * 8 */
+    border: 10px solid #724f3b;
+    box-shadow: 0px 0px 15px rgba(0,0,0,0.5);
+    grid-template-columns: repeat(9, 1fr); /* 8개의 열과 1개의 헤더 열 */
+    grid-template-rows: repeat(9, 1fr); /* 8개의 행과 1개의 헤더 행 */
+}
+
+
+
+.board-row {
+    display: flex;
+}
+
+.square {
+    width: 60px;
+    height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid #000;
+    position: relative;
+}
+
+/* 각 행마다 색상을 번갈아가며 적용 */
+.board-row:nth-child(odd) .square:nth-child(odd),
+.board-row:nth-child(even) .square:nth-child(even) {
+  background-color: #925351; /* 어두운 색 */
+}
+
+.board-row:nth-child(odd) .square:nth-child(even),
+.board-row:nth-child(even) .square:nth-child(odd) {
+  background-color: #e6b781; /* 밝은 색 */
+}
+
+.square.valid::after {
+    content: '';
+    position: absolute;
+    width: 15px;
+    height: 15px;
+    background-color: rgba(0, 255, 0, 0.5);
+    border-radius: 50%;
+}
+
+#boardPage{
+    width: 100%;
+    height: 100vh;
+    background-color: #836544;
+}
+
+.mainPage{
+    margin: 0px 20px;
+    float: left;
+    width: 590px;
+    height: 100vh;
+    background-color: #352120;
+}
+
+#askBtn:hover{
+   color: rgb(255,255,255);
+}
+
+#turnStatus{
+    margin: 20px auto;
+    text-align: center;
+    width: 400px;
+    height: 50px;
+    line-height: 50px;
+    border-radius: 15px;
+    border: 5px solid #724f3b;
+    background-color: #e6b781;
+}
+
+#moveLine{
+    margin: 25px auto;
+    width: 450px;
+    height: 85vh;
+    border-radius: 25px;
+    border: 10px solid #724f3b;
+    background-color: #e6b781;
+    box-shadow: 0px 0px 15px rgba(0,0,0,0.8);
+    overflow-x: none;
+    overflow-y: auto;
+}
+
+.moveBlock{
+    margin: 30px auto;
+    width: 400px;
+    height: 60px;
+    border-radius: 25px;
+    border: 10px solid #724f3b;
+    background-color: #e6b781;
+    box-shadow: 0px 0px 15px rgba(0,0,0,0.8);
+}
+
+.moveBlock div{
+    float: left;
+    font-size: 15px;
+    font-weight: bold;
+}
+
+.moveColor, .moveContent{
+    margin : 20px
+}
+
+#rulletPage{
+    background-image: url(./image/room.png);
+}
+
+@keyframes pogMove {
+    0%{
+        top : -100px
+    }
+    50%{
+        top : 420px
+    }100%{
+        top : -100px;
+    }
+}
+
+#pog{
+    position: absolute;
+    width: 500px;
+    top: 0;
+    left: 36%;
+    z-index: 5;
+    animation: pogMove 5s infinite;
+}
+
+#pog img{
+    margin: auto;
+    width: 100%;
+}
+
+#musicBtn{
+    width: 120px;
+    height: 40px;
+    cursor: pointer;
+    border-radius: 15px;
+    font-weight: bold;
+    border: 5px solid #724f3b;
+    background-color: #e6b781;
+    box-shadow: 0px 0px 15px rgba(0,0,0,0.8);
+    transition: all 0.2s;
+}
+
+#musicBtn:hover{
+    background-color: #af8c63;
+}
+
+#turnLoading{
+    margin-top: 120px;
+    left: 41%;
+    width: 300px;
+    border-radius: 15px;
+    border: 5px solid #724f3b;
+    background-color: #e6b781;
+    box-shadow: 0px 0px 15px rgba(0,0,0,0.8);
+    position: absolute;
+    z-index: 1;
+    overflow: hidden;
+}
+
+#turnLoading img{
+    width: 100%;
+    display: block;
+    margin: auto;
+}
