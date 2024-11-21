@@ -90,6 +90,8 @@ const Board = () => {
     const rows = [8, 7, 6, 5, 4, 3, 2, 1]; // 행 번호 (8부터 1까지)
     const cols = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H']; // 열 알파벳 (A부터 H까지)
 
+    console.log(board)
+
     useEffect(() => {
         let temp = [];
         for(let i = 0; i < moveLine.length; i++){
@@ -101,7 +103,7 @@ const Board = () => {
             }
 
             temp.push(
-                <div className='moveBlock'>
+                <div className='moveBlock' key={'move' + i}>
                     <div className='moveColor'>
                         {color}
                     </div>
@@ -126,6 +128,7 @@ const Board = () => {
                 if(playerColor === "black"){
                     setMoveLine(response.data.move)
                 }
+                setTurn(playerColor)
                 
                 setBoard(response.data.board)
             })
@@ -151,9 +154,7 @@ const Board = () => {
             setLoading(1);
             setTurn(playerColor === "black" ? "white" : "black")
             setTurnChance(0);
-            axios.post("/move", {
-                move : ""
-            }).then((response) => {
+            axios.get("/skip").then((response) => {
                 
                 if(response.data.status === "fail"){
                     alert("체크메이트이오.")
@@ -481,20 +482,18 @@ const Board = () => {
                     if(response.data.status === "fail"){
                         alert("체크메이트이오.")
                     }else{
-                        
+                        setLoading(0);
+                        setCheckmateServer(response.data.checkmate)
+                        setTurn(playerColor === "black" ? "black" : "white")
+                        setFen(response.data.fen)
+                        setMoveLine(response.data.move)
+                        setBoard(response.data.board)
                         axios.post("/ask", {
                             data : fen
                         }).then((response) => {
                             if(response.data.answer === "(none)"){
-                                alert("게임이 끝났습니다.")
+                                alert("게임이 끝났습니다. 처음화면으로 이동합니다.")
                                 setPlayerColor(null);
-                            }else{
-                                setLoading(0);
-                                setCheckmateServer(response.data.checkmate)
-                                setTurn(playerColor === "black" ? "black" : "white")
-                                setFen(response.data.fen)
-                                setMoveLine(response.data.move)
-                                setBoard(response.data.board)
                             }
                         })
                     }            

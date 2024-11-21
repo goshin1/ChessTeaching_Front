@@ -27,6 +27,7 @@ export default function Rullet(props){
 
     useEffect(() => {
     if(props.result === "조언"){
+      setAdvice("잠시 기다려주시오.")
       if(props.fen !== ""){
         axios.post("/ask", {
             data : props.fen

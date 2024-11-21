@@ -106,8 +106,23 @@
     border: 10px solid #724f3b;
     background-color: #e6b781;
     box-shadow: 0px 0px 15px rgba(0,0,0,0.8);
-    overflow-x: none;
+    overflow-x: hidden;
     overflow-y: auto;
+}
+
+#moveLine::-webkit-scrollbar {
+    width: 10px;
+}
+#moveLine::-webkit-scrollbar-thumb {
+    background-color: #31291f;
+    border-radius: 10px;
+    background-clip: padding-box;
+    border: 2px solid transparent;
+}
+#moveLine::-webkit-scrollbar-track {
+    background-color: #724f3b;
+    border-radius: 10px;
+    box-shadow: inset 0px 0px 5px #352120;
 }
 
 .moveBlock{
