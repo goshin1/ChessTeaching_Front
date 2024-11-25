@@ -1,5 +1,7 @@
 // Board.js
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef} from 'react';
+import { io } from "socket.io-client";
+import ReactMarkdown from "react-markdown";
 import { DndProvider, useDrag, useDrop } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
 import './Board.css';
@@ -78,6 +80,10 @@ const Board = () => {
     const [fen, setFen] = useState("");
     const [turn, setTurn] = useState(playerColor)
     const [moveBlock, setMoveBlock] = useState([]);
+    const [analyze, setAnalyze] = useState(0); 
+    const [analyzeContent, setAnalyzeContent] = useState(null);
+    const [answer, setAnswer] = useState(0); // 챗봇 알림창
+    const [answerCheck, setAnswerCheck] = useState(0);
     
     const [checkmate, setCheckmate] = useState(false);  // 체크메이트 상태 추가
     const [checkmateServer, setCheckmateServer] = useState("");
@@ -89,8 +95,6 @@ const Board = () => {
     const size = 8; // 8x8 보드
     const rows = [8, 7, 6, 5, 4, 3, 2, 1]; // 행 번호 (8부터 1까지)
     const cols = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H']; // 열 알파벳 (A부터 H까지)
-
-    console.log(board)
 
     useEffect(() => {
         let temp = [];
@@ -123,7 +127,6 @@ const Board = () => {
                 color : playerColor
             })
             .then((response) => {
-                console.log(response.data)
                 setLoading(0);
                 if(playerColor === "black"){
                     setMoveLine(response.data.move)
@@ -172,6 +175,41 @@ const Board = () => {
         }
     }, [result]);
 
+    
+
+    
+    let socketRef = useRef(null);
+    useEffect(() => {
+        if (socketRef.current) {
+            socketRef.current.close();
+        }
+
+        const connectWebSocket = () => {
+            socketRef.current = new WebSocket('ws://localhost:3001');
+
+            socketRef.current.onopen = () => {
+                console.log('WebSocket 연결 성공');
+            };
+
+            socketRef.current.onmessage = (event) => {
+                setAnalyzeContent((prevAnalysis) => prevAnalysis + event.data);
+            };
+
+            socketRef.current.onclose = () => {
+                console.log('서버와의 연결이 종료되었습니다.');
+                // 서버가 닫힌 경우 재연결 시도
+                setTimeout(connectWebSocket, 3000); // 3초 후 재시도
+            };
+
+            socketRef.current.onerror = (error) => {
+                console.error('WebSocket 오류:', error);
+                // 오류가 발생하면 일정 시간 후 재시도
+                setTimeout(connectWebSocket, 3000); // 3초 후 재시도
+            };
+        };
+
+        connectWebSocket();
+    }, []);
 
     // 캐슬링 가능 여부 상태
     const [castlingRights, setCastlingRights] = useState({
@@ -217,11 +255,7 @@ const Board = () => {
             }
 
             // 대각선 먹기
-            // console.log("왼 " + board[row + direction]?.[col - 1])
-            // console.log(pieceColors[board[row + direction][col - 1]])
 
-            // console.log("오른 "+board[row + direction]?.[col + 1])
-            // console.log(pieceColors[board[row + direction][col + 1]])
             if (board[row + direction]?.[col - 1] && pieceColors[board[row + direction][col - 1]] !== color &&
                 board[row + direction][col - 1] !== '.' && board[row + direction][col - 1] !== color
             ) {
@@ -491,9 +525,22 @@ const Board = () => {
                         axios.post("/ask", {
                             data : fen
                         }).then((response) => {
+                            
                             if(response.data.answer === "(none)"){
-                                alert("게임이 끝났습니다. 처음화면으로 이동합니다.")
-                                setPlayerColor(null);
+                                setAnalyze(1);
+                                setAnalyzeContent("잠시 기보를 분석중이니, 기다려주세요.")
+
+                                if (analyze === 0) {  // 이미 분석 중이면 다시 요청하지 않도록
+                                    axios.get('/analyzes')
+                                    .then((response) => {
+                                        if(response.status === 200){
+                                            setAnalyzeContent(response.data.analyze)
+                                            
+                                        }
+                                    })
+                                  }
+
+                                
                             }
                         })
                     }            
@@ -601,12 +648,30 @@ const Board = () => {
                 <img src='/image/thinking_king.png'/>
                 <p style={{fontWeight : 'bold'}}>왕이 고뇌하고 있습니다.</p>
             </div>
+
+            <div id='analyze' style={{display : analyze === 0 ? 'none' : 'block'}}>
+                <h3>사용자의 기보 분석</h3>
+                <img src='/image/analyze.png'/>
+                <div style={{width : '95%', margin : '0 auto', lineHeight : '20px'}}>
+                    <ReactMarkdown>
+                        {analyzeContent}
+                    </ReactMarkdown>
+                </div>
+                <input type='button' id='retryBtn' value='다시하기' onClick={()=>{
+                    socketRef.current.close();
+                    setAnalyze(0);
+                    setAnalyzeContent(null)
+                    setPlayerColor(null);
+                }}/>
+            </div>
+
             <div className='mainPage' id='rulletPage'>
                 <Rullet fen={fen} result={result} setResult={setResult} 
                     thinking={thinking} setThinking={setThinking}
                     turnChance={turnChance} setTurnChance={setTurnChance}>
                 </Rullet>
             </div>
+            
             <div className='mainPage'>
                 <h2 id='turnStatus'>
                     {turn === "black" ? "Black" : "White"}
@@ -635,10 +700,45 @@ const Board = () => {
                     <img src='/image/pogBlock.png'/>
                 </div>
                 <BackgroundMusic></BackgroundMusic>
+                
             </div>
+            
             <div className='mainPage'>
                 <div id='moveLine'>
                     {moveBlock}
+                </div>
+                <input type='button' id='chatBtn' value={answer === 1 ? '그만하기' : '알아보기'} onClick={() => {
+                    if(answer === 0){
+                        setAnalyzeContent("");
+                        setAnswer(1);
+                    }else{
+                        setAnalyzeContent("");
+                        setAnswer(0)
+                    }
+                }}/>
+            </div>
+            {/* const [answer, setAnswer] = useState(0);  */}
+            <div id='chatBot' style={{display : answer === 0 ? 'none' : 'block'}}>
+                <h3>체스에 대해 궁금한게 있으시면 물어보세요!</h3>
+                <ReactMarkdown>
+                    {analyzeContent}
+                </ReactMarkdown>
+                <div id='answerBox'>
+                    <input id='answerAi' type='text'/>
+                    <input type='button' id='sendChat' value='질문하기' onClick={() => {
+                        let answerAi = document.getElementById("answerAi").value;
+                        if(answerAi === "") return;
+                        setAnalyzeContent("")
+                        setAnswerCheck(1)
+                        document.getElementById("answerAi").value = "";
+                        axios.post("/answer", {
+                            answer : answerAi
+                        }).then((response) => {
+                            setAnswerCheck(0);
+                            setAnalyzeContent(response.data.answer)
+                        })
+                        
+                    }}/>
                 </div>
             </div>
         </div>
